@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infografía: Radiografía de la Alimentación Canina</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F5F5F7;
+            color: #1D1D1F;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 320px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .stat-card {
+            background-color: #007AFF;
+            color: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        .stat-number {
+            font-size: 4rem;
+            font-weight: 600;
+            line-height: 1;
+        }
+        .stat-text {
+            margin-top: 0.5rem;
+            font-size: 1.125rem;
+            font-weight: 400;
+        }
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #007AFF;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 8px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container mx-auto p-4 md:p-8 max-w-5xl">
+
+        <header class="text-center mb-16 mt-8">
+            <h1 class="text-5xl md:text-6xl font-bold text-[#1D1D1F] mb-4 tracking-tight">Radiografía de la Alimentación Canina</h1>
+            <p class="text-xl md:text-2xl text-[#6E6E73] font-light">Un análisis visual de las preferencias, preocupaciones y hábitos de los dueños de perros.</p>
+        </header>
+
+        <main class="grid grid-cols-1 md:grid-cols-2 gap-12">
+
+            <div class="md:col-span-2 bg-white rounded-xl shadow-sm p-8">
+                <h2 class="text-3xl font-semibold mb-6 text-center text-[#1D1D1F]">Perfil de los Perros Encuestados</h2>
+                <p class="text-center text-[#6E6E73] mb-8 leading-relaxed">Para entender los datos, primero conozcamos a los protagonistas. La mayoría son perros adultos de tamaño mediano, lo que representa el perfil más común entre los participantes de la encuesta.</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-10">
+                    <div>
+                        <h3 class="text-xl font-medium mb-4 text-center text-[#1D1D1F]">Distribución por Edad</h3>
+                        <div class="chart-container h-64 sm:h-auto">
+                            <canvas id="profileAgeChart"></canvas>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-medium mb-4 text-center text-[#1D1D1F]">Distribución por Tamaño</h3>
+                        <div class="chart-container h-64 sm:h-auto">
+                            <canvas id="profileSizeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="md:col-span-2 bg-white rounded-xl shadow-sm p-8">
+                <h2 class="text-3xl font-semibold mb-6 text-center text-[#1D1D1F]">¿Qué Comen Nuestros Perros Actualmente?</h2>
+                <p class="text-center text-[#6E6E73] mb-8 leading-relaxed">La alimentación de los perros de la muestra se inclina hacia opciones consideradas más saludables. El pienso sin cereales y la comida natural cocinada lideran las preferencias, dejando muy atrás al pienso ultraprocesado.</p>
+                <div class="chart-container h-96">
+                    <canvas id="currentFoodChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-sm p-8">
+                <h2 class="text-3xl font-semibold mb-6 text-[#1D1D1F]">Factores Clave en la Elección</h2>
+                <p class="text-[#6E6E73] mb-6 leading-relaxed">A la hora de elegir, la naturalidad del producto es, con diferencia, el factor más decisivo. La transparencia en el etiquetado y en el proceso de producción también son muy valorados por los dueños.</p>
+                <div class="chart-container h-80">
+                    <canvas id="valuedFactorsChart"></canvas>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm p-8">
+                <h2 class="text-3xl font-semibold mb-6 text-[#1D1D1F]">Principales Preocupaciones</h2>
+                <p class="text-[#6E6E73] mb-6 leading-relaxed">Más allá del precio, la principal inquietud es la nutrición: los dueños no están seguros de si el menú que ofrecen es completo. La desconfianza hacia el marketing de las marcas es la segunda gran preocupación.</p>
+                <div class="chart-container h-80">
+                    <canvas id="concernsChart"></canvas>
+                </div>
+            </div>
+
+            <div class="md:col-span-2 bg-white rounded-xl shadow-sm p-8">
+                <h2 class="text-3xl font-semibold mb-6 text-center text-[#1D1D1F]">✨ Asesor Nutricional para Perros ✨</h2>
+                <p class="text-center text-[#6E6E73] mb-8 leading-relaxed">¿Te preocupa si la dieta de tu perro es equilibrada? Describe los ingredientes o el menú que le das y nuestro asesor de IA te dará una opinión sobre su balance nutricional.</p>
+                <div class="mb-6">
+                    <label for="nutritionInput" class="block text-[#1D1D1F] text-base font-medium mb-2">Describe los ingredientes o el menú:</label>
+                    <textarea id="nutritionInput" class="border border-[#D2D2D7] rounded-lg w-full py-3 px-4 text-[#1D1D1F] leading-tight focus:outline-none focus:ring-2 focus:ring-[#007AFF]" rows="4" placeholder="Ej: Pollo cocido, arroz blanco, zanahorias, un poco de aceite de oliva."></textarea>
+                </div>
+                <button id="analyzeNutritionBtn" class="bg-[#007AFF] hover:bg-[#005CE6] text-white font-semibold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#007AFF] focus:ring-offset-2 transition-colors duration-200 w-full md:w-auto">
+                    Analizar Nutrición <span id="nutritionLoading" class="hidden loading-spinner"></span>
+                </button>
+                <div id="nutritionOutput" class="mt-6 p-6 bg-[#F5F5F7] rounded-lg text-[#1D1D1F] hidden border border-[#E8E8ED]"></div>
+            </div>
+
+            <div class="md:col-span-2 bg-white rounded-xl shadow-sm p-8">
+                <h2 class="text-3xl font-semibold mb-6 text-center text-[#1D1D1F]">El Salto a lo Natural: Barreras y Realidades</h2>
+                <p class="text-center text-[#6E6E73] mb-8 leading-relaxed">Aunque la comida natural es deseada, existen barreras prácticas. Sin embargo, el mayor mito queda desmentido: la aceptación por parte de los perros no es un problema en absoluto.</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-10 items-center">
+                    <div class="md:col-span-2">
+                        <h3 class="text-xl font-medium mb-4 text-center text-[#1D1D1F]">Obstáculos para la Comida Natural</h3>
+                        <div class="chart-container h-80">
+                            <canvas id="barriersChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="md:col-span-1">
+                        <div class="stat-card">
+                            <div class="stat-number">0</div>
+                            <div class="stat-text">Dueños reportaron que su perro rechazó la comida natural.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="md:col-span-2 bg-white rounded-xl shadow-sm p-8">
+                <h2 class="text-3xl font-semibold mb-6 text-center text-[#1D1D1F]">✨ Sugerencias de Menú Personalizadas ✨</h2>
+                <p class="text-center text-[#6E6E73] mb-8 leading-relaxed">Obtén ideas de comidas naturales y equilibradas adaptadas al perfil de tu perro, generadas por nuestra inteligencia artificial.</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <div>
+                        <label for="dogAge" class="block text-[#1D1D1F] text-base font-medium mb-2">Edad:</label>
+                        <select id="dogAge" class="border border-[#D2D2D7] rounded-lg w-full py-3 px-4 text-[#1D1D1F] leading-tight focus:outline-none focus:ring-2 focus:ring-[#007AFF]">
+                            <option value="Cachorro">Cachorro</option>
+                            <option value="Adulto" selected>Adulto</option>
+                            <option value="Senior">Senior</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="dogSize" class="block text-[#1D1D1F] text-base font-medium mb-2">Tamaño:</label>
+                        <select id="dogSize" class="border border-[#D2D2D7] rounded-lg w-full py-3 px-4 text-[#1D1D1F] leading-tight focus:outline-none focus:ring-2 focus:ring-[#007AFF]">
+                            <option value="Pequeño">Pequeño</option>
+                            <option value="Medio" selected>Medio</option>
+                            <option value="Grande">Grande</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="dogHealth" class="block text-[#1D1D1F] text-base font-medium mb-2">Problemas de Salud:</label>
+                        <input type="text" id="dogHealth" class="border border-[#D2D2D7] rounded-lg w-full py-3 px-4 text-[#1D1D1F] leading-tight focus:outline-none focus:ring-2 focus:ring-[#007AFF]" placeholder="Ej: Digestión difícil, alergias">
+                    </div>
+                </div>
+                <button id="generateMenuBtn" class="bg-[#007AFF] hover:bg-[#005CE6] text-white font-semibold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#007AFF] focus:ring-offset-2 transition-colors duration-200 w-full md:w-auto">
+                    Generar Menú <span id="menuLoading" class="hidden loading-spinner"></span>
+                </button>
+                <div id="menuOutput" class="mt-6 p-6 bg-[#F5F5F7] rounded-lg text-[#1D1D1F] hidden border border-[#E8E8ED]"></div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm p-8">
+                <h2 class="text-3xl font-semibold mb-6 text-[#1D1D1F]">Estado de Salud General</h2>
+                <p class="text-[#6E6E73] mb-6 leading-relaxed">La gran mayoría de los perros de la muestra gozan de buena salud. Entre los que presentan algún problema, las digestiones difíciles son el achaque más común.</p>
+                <div class="chart-container h-80">
+                    <canvas id="healthStatusChart"></canvas>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm p-8">
+                <h2 class="text-3xl font-semibold mb-6 text-[#1D1D1F]">Problemas de Salud Frecuentes</h2>
+                <p class="text-[#6E6E73] mb-6 leading-relaxed">Un vistazo a los problemas de salud más mencionados entre la minoría de perros que los padecen. La digestión es el principal foco de atención.</p>
+                <div class="chart-container h-80">
+                    <canvas id="healthIssuesChart"></canvas>
+                </div>
+            </div>
+
+            <div class="md:col-span-2 bg-white rounded-xl shadow-sm p-8">
+                <h2 class="text-3xl font-semibold mb-6 text-center text-[#1D1D1F]">Análisis del Gasto Mensual en Alimentación</h2>
+                <p class="text-center text-[#6E6E73] mb-8 leading-relaxed">El gasto en comida canina varía enormemente, desde presupuestos ajustados hasta cifras considerables. El histograma muestra la frecuencia de gasto, con la mayoría de dueños situándose por debajo de los 100€, aunque el promedio se acerca a esa cifra.</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center mb-6">
+                    <div class="p-5 bg-[#F5F5F7] rounded-lg border border-[#E8E8ED]">
+                        <div class="text-4xl font-bold text-[#1D1D1F]">30 €</div>
+                        <div class="text-[#6E6E73] text-lg font-medium">Gasto Mínimo</div>
+                    </div>
+                    <div class="p-5 bg-[#F5F5F7] rounded-lg border border-[#E8E8ED]">
+                        <div class="text-4xl font-bold text-[#1D1D1F]">98 €</div>
+                        <div class="text-[#6E6E73] text-lg font-medium">Gasto Medio</div>
+                    </div>
+                    <div class="p-5 bg-[#F5F5F7] rounded-lg border border-[#E8E8ED]">
+                        <div class="text-4xl font-bold text-[#1D1D1F]">300 €</div>
+                        <div class="text-[#6E6E73] text-lg font-medium">Gasto Máximo</div>
+                    </div>
+                </div>
+                <div id="spendingHistogram" class="w-full h-96"></div>
+            </div>
+
+        </main>
+
+        <footer class="text-center mt-16 pt-10 border-t border-[#E8E8ED]">
+            <h2 class="text-3xl font-semibold mb-6 text-[#1D1D1F]">Conclusiones Clave</h2>
+            <div class="max-w-3xl mx-auto text-left space-y-3 text-[#6E6E73] text-lg leading-relaxed">
+                <p>✔️ Los dueños valoran los <strong>ingredientes naturales</strong> por encima de todo, pero la <strong>falta de espacio y el coste</strong> son barreras reales para la comida natural.</p>
+                <p>✔️ La mayor preocupación no es el precio, sino la <strong>incertidumbre sobre el equilibrio nutricional</strong> y la desconfianza en el marketing de las marcas.</p>
+                <p>✔️ Los perros <strong>aceptan perfectamente la comida natural</strong>, desmontando uno de los posibles miedos de los dueños.</p>
+                <p>✔️ El gasto medio mensual se sitúa en torno a los <strong>98 €</strong>, pero existe una gran variabilidad entre los hogares.</p>
+            </div>
+        </footer>
+
+    </div>
+
+    <script>
+        const colorPalette = {
+            primary: '#007AFF',
+            secondary: '#A2A2A7',
+            lightPrimary: '#BFDFFF',
+            lightSecondary: '#E8E8ED',
+            background: '#F5F5F7',
+            text: '#1D1D1F',
+            lightText: '#6E6E73'
+        };
+
+        function wrapLabel(str, maxWidth) {
+            if (str.length <= maxWidth) {
+                return str;
+            }
+            const words = str.split(' ');
+            const lines = [];
+            let currentLine = '';
+            for (const word of words) {
+                if ((currentLine + word).length > maxWidth && currentLine.length > 0) {
+                    lines.push(currentLine.trim());
+                    currentLine = '';
+                }
+                currentLine += word + ' ';
+            }
+            lines.push(currentLine.trim());
+            return lines;
+        }
+
+        const tooltipTitleCallback = (tooltipItems) => {
+            const item = tooltipItems[0];
+            let label = item.chart.data.labels[item.dataIndex];
+            if (Array.isArray(label)) {
+                return label.join(' ');
+            }
+            return label;
+        };
+        
+        const commonChartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        color: colorPalette.lightText,
+                        font: {
+                            family: 'Inter',
+                            size: 14,
+                            weight: '400'
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        title: tooltipTitleCallback
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        color: colorPalette.lightText,
+                        font: { family: 'Inter', size: 12 }
+                    },
+                    grid: {
+                        color: colorPalette.lightSecondary
+                    }
+                },
+                y: {
+                    ticks: {
+                        color: colorPalette.lightText,
+                        font: { family: 'Inter', size: 12 }
+                    },
+                    grid: {
+                        color: colorPalette.lightSecondary
+                    }
+                }
+            }
+        };
+
+        new Chart(document.getElementById('profileAgeChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Adulto', 'Senior', 'Cachorro'],
+                datasets: [{
+                    label: 'Edad',
+                    data: [22, 4, 2],
+                    backgroundColor: [colorPalette.primary, colorPalette.secondary, colorPalette.lightPrimary],
+                    borderColor: colorPalette.background,
+                    borderWidth: 6
+                }]
+            },
+            options: commonChartOptions
+        });
+
+        new Chart(document.getElementById('profileSizeChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Medio', 'Grande', 'Pequeño'],
+                datasets: [{
+                    label: 'Tamaño',
+                    data: [17, 7, 6],
+                    backgroundColor: [colorPalette.primary, colorPalette.secondary, colorPalette.lightPrimary],
+                    borderColor: colorPalette.background,
+                    borderWidth: 6
+                }]
+            },
+            options: commonChartOptions
+        });
+        
+        const currentFoodLabels = ['Pienso sin cereales', 'Comida natural cocinada', 'Comida húmeda', 'BARF cruda', 'Pienso ultraprocesado'].map(label => wrapLabel(label, 20));
+        new Chart(document.getElementById('currentFoodChart'), {
+            type: 'bar',
+            data: {
+                labels: currentFoodLabels,
+                datasets: [{
+                    label: 'Número de Menciones',
+                    data: [14, 12, 5, 3, 2],
+                    backgroundColor: colorPalette.primary,
+                    borderColor: colorPalette.primary,
+                    borderWidth: 0,
+                    borderRadius: 4
+                }]
+            },
+            options: { ...commonChartOptions, indexAxis: 'y', plugins: { legend: { display: false }, tooltip: { callbacks: { title: tooltipTitleCallback } } } }
+        });
+
+        const valuedFactorsLabels = ['Ingredientes naturales', 'Etiquetas claras', 'Proceso de producción transparente', 'Formulado por veterinarios'].map(label => wrapLabel(label, 25));
+        new Chart(document.getElementById('valuedFactorsChart'), {
+            type: 'bar',
+            data: {
+                labels: valuedFactorsLabels,
+                datasets: [{
+                    label: 'Número de Menciones',
+                    data: [27, 13, 7, 2],
+                    backgroundColor: colorPalette.primary,
+                    borderWidth: 0,
+                    borderRadius: 4
+                }]
+            },
+            options: { ...commonChartOptions, indexAxis: 'y', plugins: { legend: { display: false }, tooltip: { callbacks: { title: tooltipTitleCallback } } } }
+        });
+
+        const concernsLabels = ['Menú no equilibrado', 'Marketing engañoso', 'Precio', 'Logística'].map(label => wrapLabel(label, 16));
+        new Chart(document.getElementById('concernsChart'), {
+            type: 'bar',
+            data: {
+                labels: concernsLabels,
+                datasets: [{
+                    label: 'Número de Menciones',
+                    data: [13, 9, 6, 3],
+                    backgroundColor: colorPalette.primary,
+                    borderWidth: 0,
+                    borderRadius: 4
+                }]
+            },
+            options: { ...commonChartOptions, plugins: { legend: { display: false }, tooltip: { callbacks: { title: tooltipTitleCallback } } } }
+        });
+
+        const barriersLabels = ['Espacio en nevera', 'Coste elevado', 'Tiempo de preparación'].map(label => wrapLabel(label, 16));
+        new Chart(document.getElementById('barriersChart'), {
+            type: 'bar',
+            data: {
+                labels: barriersLabels,
+                datasets: [{
+                    label: 'Número de Menciones',
+                    data: [9, 7, 4],
+                    backgroundColor: colorPalette.primary,
+                    borderWidth: 0,
+                    borderRadius: 4
+                }]
+            },
+            options: { ...commonChartOptions, plugins: { legend: { display: false }, tooltip: { callbacks: { title: tooltipTitleCallback } } } }
+        });
+
+        new Chart(document.getElementById('healthStatusChart'), {
+            type: 'pie',
+            data: {
+                labels: ['Sin Problemas de Salud', 'Con Problemas de Salud'],
+                datasets: [{
+                    data: [21, 13],
+                    backgroundColor: [colorPalette.primary, colorPalette.secondary],
+                    borderColor: colorPalette.background,
+                    borderWidth: 6
+                }]
+            },
+            options: commonChartOptions
+        });
+        
+        const healthIssuesLabels = ['Difícil digestión', 'Poco apetito', 'Alergias'].map(label => wrapLabel(label, 16));
+        new Chart(document.getElementById('healthIssuesChart'), {
+            type: 'bar',
+            data: {
+                labels: healthIssuesLabels,
+                datasets: [{
+                    label: 'Número de Casos',
+                    data: [6, 4, 3],
+                    backgroundColor: colorPalette.primary,
+                    borderWidth: 0,
+                    borderRadius: 4
+                }]
+            },
+            options: { ...commonChartOptions, plugins: { legend: { display: false }, tooltip: { callbacks: { title: tooltipTitleCallback } } } }
+        });
+
+        const spendingData = [180, 70, 120, 140, 70, 300, 80, 57, 60, 73, 30, 56, 80, 50, 82, 100, 300, 80, 50];
+        const spendingTrace = {
+            x: spendingData,
+            type: 'histogram',
+            marker: {
+                color: colorPalette.primary,
+            },
+            xbins: {
+                start: 30,
+                end: 300,
+                size: 25
+            }
+        };
+        const spendingLayout = {
+            title: {
+                text: 'Distribución del Gasto Mensual (€)',
+                font: {
+                    color: colorPalette.text,
+                    family: 'Inter',
+                    size: 20,
+                    weight: '600'
+                }
+            },
+            xaxis: {
+                title: {
+                    text: 'Gasto en Euros',
+                    font: { color: colorPalette.lightText, family: 'Inter', size: 14 }
+                },
+                tickfont: { color: colorPalette.lightText, family: 'Inter', size: 12 },
+                gridcolor: colorPalette.lightSecondary
+            },
+            yaxis: {
+                title: {
+                    text: 'Número de Dueños',
+                    font: { color: colorPalette.lightText, family: 'Inter', size: 14 }
+                },
+                tickfont: { color: colorPalette.lightText, family: 'Inter', size: 12 },
+                gridcolor: colorPalette.lightSecondary
+            },
+            font: {
+                family: 'Inter, sans-serif'
+            },
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            margin: { t: 50, b: 50, l: 50, r: 50 }
+        };
+        const spendingConfig = {
+            responsive: true,
+            displayModeBar: false
+        };
+        Plotly.newPlot('spendingHistogram', [spendingTrace], spendingLayout, spendingConfig);
+
+        const apiKey = "";
+
+        async function callGeminiAPI(buttonElement, outputElement, loadingElement) {
+            outputElement.innerHTML = '';
+            outputElement.classList.add('hidden');
+            loadingElement.classList.remove('hidden');
+            buttonElement.disabled = true;
+
+            let prompt;
+            if (buttonElement.id === 'analyzeNutritionBtn') {
+                const nutritionInput = document.getElementById('nutritionInput').value;
+                if (nutritionInput.trim() === '') {
+                    outputElement.innerHTML = 'Por favor, introduce los ingredientes o el menú para analizar.';
+                    outputElement.classList.remove('hidden');
+                    loadingElement.classList.add('hidden');
+                    buttonElement.disabled = false;
+                    return;
+                }
+                prompt = `Analiza la siguiente lista de ingredientes o descripción de comida para un perro y comenta sobre su posible equilibrio nutricional, indicando si parece completa o si le faltaría algo esencial. Si es desequilibrada, sugiere qué añadir. Ingredientes: ${nutritionInput}`;
+            } else if (buttonElement.id === 'generateMenuBtn') {
+                const dogAge = document.getElementById('dogAge').value;
+                const dogSize = document.getElementById('dogSize').value;
+                const dogHealth = document.getElementById('dogHealth').value;
+                prompt = `Genera 3 ideas de comidas naturales y equilibradas para un perro con el siguiente perfil: Edad: ${dogAge}, Tamaño: ${dogSize}, Problemas de salud: ${dogHealth || 'Ninguno'}. Concéntrate en ingredientes naturales y fáciles de conseguir.`;
+            }
+
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+            const payload = { contents: chatHistory };
+
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+            let response;
+            let result;
+            let retries = 0;
+            const maxRetries = 5;
+            const baseDelay = 1000;
+
+            while (retries < maxRetries) {
+                try {
+                    response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.status === 429) {
+                        retries++;
+                        const delay = baseDelay * Math.pow(2, retries - 1);
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        continue;
+                    }
+
+                    result = await response.json();
+                    break;
+                } catch (error) {
+                    retries++;
+                    const delay = baseDelay * Math.pow(2, retries - 1);
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+
+            loadingElement.classList.add('hidden');
+            buttonElement.disabled = false;
+
+            if (result && result.candidates && result.candidates.length > 0 &&
+                result.candidates[0].content && result.candidates[0].content.parts &&
+                result.candidates[0].content.parts.length > 0) {
+                const text = result.candidates[0].content.parts[0].text;
+                outputElement.innerHTML = text.replace(/\n/g, '<br>');
+                outputElement.classList.remove('hidden');
+            } else {
+                outputElement.innerHTML = 'Lo siento, no pude generar una respuesta. Por favor, inténtalo de nuevo.';
+                outputElement.classList.remove('hidden');
+            }
+        }
+
+        document.getElementById('analyzeNutritionBtn').addEventListener('click', (event) => {
+            callGeminiAPI(event.currentTarget, document.getElementById('nutritionOutput'), document.getElementById('nutritionLoading'));
+        });
+
+        document.getElementById('generateMenuBtn').addEventListener('click', (event) => {
+            callGeminiAPI(event.currentTarget, document.getElementById('menuOutput'), document.getElementById('menuLoading'));
+        });
+
+    </script>
+</body>
+</html>
